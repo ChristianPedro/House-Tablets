@@ -1,0 +1,23 @@
+//Variables and libraries
+const express = require("express");
+require('dotenv/config');
+app = express();
+
+//Serve static files
+app.use(express.static('public'));
+//allow server to read json body
+app.use(express.json());
+
+
+//Set private middleware and routes
+app.use("/private", require("./middleware/auth"));
+app.use("/private", require('./routes/privateRoutes'));
+
+//Set public routes
+app.use("/auth", require("./routes/publicRoutes"));
+
+
+
+
+//Server listen
+app.listen(process.env.PORT || 3000);
