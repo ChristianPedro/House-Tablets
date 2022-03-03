@@ -120,4 +120,6 @@ router.post("/login", (req, res) => {
 	}
 })
 
+console.log('stinky');
+
 module.exports = router;
