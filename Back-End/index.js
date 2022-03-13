@@ -14,7 +14,7 @@ app.use(cors());
 
 
 //Set private middleware and routes
-app.use("/private", require("./middleware/auth"));
+// app.use("/private", require("./middleware/auth"));
 app.use("/private", require('./routes/privateRoutes'));
 
 //Set public routes

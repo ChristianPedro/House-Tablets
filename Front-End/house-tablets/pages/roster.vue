@@ -2,6 +2,7 @@
 	<div class="page">
 		<navbar/>
 		<div class="mainContent">
+            <div id="messageblock">{{messageBlock}}</div>
             <table class="RosterTable">
                 <thead>
                     <tr><th>Name</th><th>Nickname</th><th>Position</th><th>Year</th><th>Pledge Class</th></tr>
@@ -10,6 +11,7 @@
                     <tr><td>Name</td><td>Nickname</td><td>Position</td><td>Year</td><td>Pledge Class</td></tr>
                 </tbody>
             </table>
+            <button @click="fetchRosterData">Pull data</button>
             <button @click="clearTable">clear</button>
 		</div>
 	</div>
@@ -29,8 +31,43 @@ export default {
       
    }),
     methods: {
-        fetchRosterData:  ()=>{
-            fetch(`http://localhost:3000/search?genre=${genreSent}`, {
+        fillTable(response){
+            let table = document.getElementById("tableBody")
+            console.log("running")
+            console.log(response)
+            response.forEach(element => {
+                let currentRow = document.createElement('tr')
+                
+                let name = document.createElement('td')
+                let nickname = document.createElement('td')
+                let position = document.createElement('td')
+                let year = document.createElement('td')
+                let pledgeClass = document.createElement('td')
+                name.textContent = element.name
+                nickname.textContent = element.nickname
+                position.textContent = element.position
+                year.textContent = element.year
+                pledgeClass.textContent = element.pledgeclass
+                name.style.border = '1px solid black'
+                nickname.style.border = '1px solid black'
+                position.style.border = '1px solid black'
+                year.style.border = '1px solid black'
+                pledgeClass.style.border = '1px solid black'
+
+
+                currentRow.append(name)
+                currentRow.append(nickname)
+                currentRow.append(position)
+                currentRow.append(year)
+                currentRow.append(pledgeClass)
+                
+                table.append(currentRow)
+                });
+        },
+        fetchRosterData(){
+            let messageBlock = document.getElementById('messageblock');
+            let goodToGo = false;
+            fetch(`http://localhost:3000/private/roster`, {
             method: "GET",
             headers: {
                 'Content-Type': 'application/json'
@@ -45,11 +82,12 @@ export default {
             }
             return response.json()
         }).then( data => {
-            if (data.rows.length == 0){
-                messageBlock.textContent = "No books found"
+            console.log(data)
+            if (data.length == 0){
+                messageBlock.textContent = "No members found"
             }
             if (goodToGo){
-                fillTable(data)
+                this.fillTable(data)
             }
             console.log(data)
         }).catch(error => {
@@ -57,7 +95,7 @@ export default {
         })
     },
         //Clear table
-    clearTable: ()=> {
+    clearTable() {
         // for (let index = 1; index < table.children.length; index++) {
         //     table.removeChild(table.children[index])
         // }
@@ -79,26 +117,8 @@ export default {
         // }
 
     },   
-    fillTable: (response) => {
-	console.log("running")
-	response.rows.forEach(element => {
-		let currentRow = document.createElement('tr')
-		
-		let title = document.createElement('td')
-		let genre = document.createElement('td')
-		let quality = document.createElement('td')
-		title.textContent = element.title
-		genre.textContent = element.genre
-		quality.textContent = (element.quality == true ? 'Yes' : 'No')
-		currentRow.append(title)
-		currentRow.append(genre)
-		currentRow.append(quality)
-		
-		table.append(currentRow)
-	});
-}
     },
-		
+	
 }
 	
 </script>
@@ -163,5 +183,10 @@ table, th, td {
   border: 1px solid;
   margin: 0;
   border-spacing: 0px;
+}
+.addedcells{
+    border: 1px solid black;
+    margin: 0;
+    border-spacing: 0px; 
 }
 </style>
