@@ -24,4 +24,4 @@ app.use("/auth", require("./routes/publicRoutes"));
 
 
 //Server listen
-app.listen(process.env.PORT || 3000);
+app.listen(3000 || process.env.PORT );
