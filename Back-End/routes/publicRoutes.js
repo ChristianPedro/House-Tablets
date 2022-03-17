@@ -19,7 +19,9 @@ router.get("/create-user", (req, res) => {
 	let venmo = req.body.venmo;
 	let pledgeclass = req.body.pledgeclass;
 	console.log(typeof name);
+	console.log(name)
 	try {
+		console.log(name)
 		//if username and password is found in body and all values is of type string
 		if (name && password && nickname && phoneNumber && position && year && multiplier && venmo && pledgeclass
 			&& typeof name == 'string' && typeof password == 'string' && typeof phoneNumber == 'string' && 
@@ -27,13 +29,12 @@ router.get("/create-user", (req, res) => {
 			&& typeof pledgeclass == 'string'){
 			//Hash password
 			let hashedPassword = bcrypt.hashSync(password, 10);
-			
 			console.log(`name: ${name}, password: ${password}, | password: ${hashedPassword} 
 			phoneNumber: ${phoneNumber} position: ${position} year: ${year} multiplier: ${multiplier} 
 			venmo: ${venmo} pledgeclass: ${pledgeclass}`)
 			
 			//trim spaces off text
-			let name = name.tostring().trim(); //spaces arent the problem
+			name = name.trim(); //spaces arent the problem
 
 			//insert into user: name, nickname, phonenumber, position, year, pultiplier, venmo, pledgeclass, password
 			pool.query(`
@@ -120,6 +121,5 @@ router.post("/login", (req, res) => {
 	}
 })
 
-console.log('stinky');
 
 module.exports = router;

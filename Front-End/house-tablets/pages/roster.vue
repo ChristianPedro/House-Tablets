@@ -1,18 +1,26 @@
 <template>
 	<div class="page">
-		<navbar/>
+		<navbar :user="username" />
 		<div class="mainContent">
-            <div id="messageblock">{{messageBlock}}</div>
-            <table class="RosterTable">
-                <thead>
-                    <tr><th>Name</th><th>Nickname</th><th>Position</th><th>Year</th><th>Pledge Class</th></tr>
-                </thead>
-	            <tbody id="tableBody">
-                    <tr><td>Name</td><td>Nickname</td><td>Position</td><td>Year</td><td>Pledge Class</td></tr>
-                </tbody>
-            </table>
-            <button @click="fetchRosterData">Pull data</button>
-            <button @click="clearTable">clear</button>
+            <h1>Roster</h1>
+             <div class="topBar">
+                <input type="text" id="search" placeholder="Search for value to highlight" v-on:keyup="highlight">
+                <div class="tableButtons">
+                    <button @click="fetchRosterData">Refresh</button>
+                    <button @click="clearTable">Clear Table</button>
+                </div>
+            </div>
+            <div class="tableContainer">
+                <div id="messageblock">{{messageBlock}}</div>
+                <table class="RosterTable">
+                    <thead>
+                        <tr><th>Name</th><th>Nickname</th><th>Position</th><th>Year</th><th>Pledge Class</th></tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr><td>Name</td><td>Nickname</td><td>Position</td><td>Year</td><td>Pledge Class</td></tr>
+                    </tbody>
+                </table>
+            </div>
 		</div>
 	</div>
 </template>
@@ -26,7 +34,7 @@ export default {
 	name: 'DashboardView',
 	data: () => ({
       
-      username: "",
+      username: ``,
       token: ""
       
    }),
@@ -70,7 +78,9 @@ export default {
             fetch(`http://localhost:3000/private/roster`, {
             method: "GET",
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'x-auth': document.cookie.split("=")[1]
             }
         }).then(response => {
             if (response.status == 200){
@@ -87,6 +97,7 @@ export default {
                 messageBlock.textContent = "No members found"
             }
             if (goodToGo){
+                this.clearTable();
                 this.fillTable(data)
             }
             console.log(data)
@@ -96,9 +107,6 @@ export default {
     },
         //Clear table
     clearTable() {
-        // for (let index = 1; index < table.children.length; index++) {
-        //     table.removeChild(table.children[index])
-        // }
         let table = document.getElementById("tableBody")
         console.log(table.children.length)
         console.log(table.children[0])
@@ -107,17 +115,34 @@ export default {
             index = table.children.length
             
         }
-        // table = document.getElementById("table").children[0]
-        // while (table.lastElementChild) {
-        //     if (table.lastElementChild.id == "stay"){
-        //         break;
-        //     } else {
-        //         table.removeChild(table.lastElementChild);
-        //     }
-        // }
 
-    },   
     },
+    highlight() {
+        let table = document.getElementById("tableBody")
+        let value = document.getElementById("search").value;
+        let highlightMe = false;
+        
+        for (let index = 0; index < table.children.length; index++) {
+            let row = table.children[index];
+            console.log(row)
+            console.log("^^")
+            row.style.backgroundColor = "lightgrey"
+            for (let innerIndex = 0; innerIndex < row.children.length; innerIndex++) {
+                let cell = row.children[innerIndex].textContent
+                console.log(cell)
+                if (cell.includes(value) && value != ""){
+                    row.style.backgroundColor = "lightyellow"
+                }
+                
+            }
+        }
+    }   
+    },
+    updated() {
+        console.log("activate worked")
+        this.fetchRosterData();
+    },
+    
 	
 }
 	
@@ -162,8 +187,12 @@ body{
 	width: 100%;
 	height: 100%;
 	min-height: calc(100vh - 66px);
+    max-height: calc(100vh - 66px);
 	background: lightgrey;
 	border-radius: 15px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 }
 .linktext{
 	color: #24252A;
@@ -177,7 +206,9 @@ body{
 
 .RosterTable{
     width: 100%;
-    height: 100%;
+    max-height: 100%;
+    overflow-y: scroll;
+    
 }
 table, th, td {
   border: 1px solid;
@@ -188,5 +219,34 @@ table, th, td {
     border: 1px solid black;
     margin: 0;
     border-spacing: 0px; 
+}
+.tableContainer{
+    position: relative;
+    width: 95%;
+    max-height: 95%;
+    overflow-y: auto;
+}
+tbody{
+    position: relative;
+    width: 100%;
+}
+.tableButtons{
+    width: 95%;
+    height: auto;
+    display: flex;
+    justify-content: flex-end;
+}
+.topBar{
+    display: flex;
+    width: 90%;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1%;
+}
+.topBar > input{
+    width: 30%;
+    border-radius: 10px;
+    padding-left: 10px;
+    border: none;
 }
 </style>

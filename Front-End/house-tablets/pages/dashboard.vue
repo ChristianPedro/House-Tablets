@@ -1,6 +1,6 @@
 <template>
 	<div class="page">
-		<navbar/>
+		<navbar :user="username"/>
 		<div class="mainContent">
 			<div class="grid-container">
 				
@@ -34,12 +34,11 @@ export default {
   components: { navbar },
 //   components: { NavBar },
 	name: 'DashboardView',
-	data: function () {
-		return {
+	data: ()=> ({
 		alignments: [
 			'start',
 		],
-		user: " ",
+		username: `${localStorage.getItem("user")}`,
 		dashboardItems: [
 			{
 				title: "Roster",
@@ -57,11 +56,9 @@ export default {
 				link: `/details`
 			}
 		],
-		methods: {
-			
-		},
+	}),
+	methods: {
 		
-    }
 	},
 	
 	

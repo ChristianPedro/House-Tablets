@@ -7,7 +7,7 @@ const TokenSecretPassword = process.env.TOKEN_SECRET;
 router.use((req, res, next) => {
   try {
     if (req.headers['x-auth'] === ""){
-      return res.redirect('/login.html');
+      return res.redirect('http://localhost:4000/');
     }
     let decodedToken = jwt.decode(req.headers['x-auth'], TokenSecretPassword)
     console.log(decodedToken)
@@ -20,16 +20,16 @@ router.use((req, res, next) => {
       if (response.rows.length === 0) {
         // username doesn't exist
         console.log("user doesnt exist");
-        return res.redirect('/login.html');
+        return res.redirect('http://localhost:4000/');
       }
     }).catch( error => {//user not found
       console.log("insertion error")
-      return res.redirect('/login.html');
+      return res.redirect('http://localhost:4000/');
     })
     next();
   } catch (error) {
     console.log("Signature verification failed in JWT middleware")
-    return res.redirect('/login.html')
+    return res.redirect('http://localhost:4000/')
   }
   
 });
